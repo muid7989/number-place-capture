@@ -34,7 +34,7 @@ function startFn() {
 	const val = {
 		width: 720,
 		height: 720,
-		facingMode: "environment"
+		facingMode: {exact: "environment"}
 	};
 	capture = createCapture({
 		audio: false,
@@ -63,6 +63,14 @@ function setup() {
 	createCanvas(CANVAS_W, CANVAS_H);
 	time = millis();
 	rectMode(CENTER);
+/*
+	navigator.mediaDevices.enumerateDevices().then((devices) => {
+		console.log(devices);
+		console.log(devices.filter((device) => device.kind === "videoinput"));
+	});
+	let result = navigator.mediaDevices.getSupportedConstraints();
+	console.log(result);
+*/
 /*
 	capture = createCapture({
 		audio: false,
