@@ -33,7 +33,8 @@ function preload() {
 function startFn() {
 	const val = {
 		width: 720,
-		height: 720
+		height: 720,
+		facingmode: "environment"
 	};
 	capture = createCapture({
 		audio: false,
