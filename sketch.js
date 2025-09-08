@@ -9,19 +9,21 @@ const GRID_SIZE = 64;
 const BASE_X = GRID_SIZE*3;
 const BASE_Y = GRID_SIZE*3;
 const UNIT_SIZE = GRID_SIZE*1;
+const BASE_W = GRID_SIZE*9;
 
 let capture;
 let captureImage;
 let captureFlag = false;
 let imageFlag = false;
+let sizeFlag = false;
 
 const BUTTON_OFFSET = 8;
 const BUTTON_W = GRID_SIZE*3;
 const BUTTON_H = GRID_SIZE*2;
-const BUTTON_X = GRID_SIZE*2;
+const BUTTON_X = GRID_SIZE*1;
 const BUTTON_Y = GRID_SIZE*16;
 const BUTTON_M = 24;
-let capButton, saveButton, startButton;
+let capButton, saveButton, startButton, sizeButton;
 
 const DEBUG = true;
 const DEBUG_VIEW_X = 40;
@@ -53,40 +55,35 @@ function capFn() {
 	}
 }
 function saveFn() {
+	let s = 9;
+	if (sizeFlag){
+		s = 15;
+	}
 	if (imageFlag){
-		const fileName = 'np'+year()+month()+day()+hour()+minute()+second();
+		const fileName = 'np'+s+'_'+year()+month()+day()+hour()+minute()+second();
 		console.log(fileName);
 		captureImage.save(fileName, 'jpg');
+	}
+}
+function sizeFn() {
+	if (sizeFlag){
+		sizeFlag = false;
+	}else{
+		sizeFlag = true;
 	}
 }
 function setup() {
 	createCanvas(CANVAS_W, CANVAS_H);
 	time = millis();
 	rectMode(CENTER);
-/*
-	navigator.mediaDevices.enumerateDevices().then((devices) => {
-		console.log(devices);
-		console.log(devices.filter((device) => device.kind === "videoinput"));
-	});
-	let result = navigator.mediaDevices.getSupportedConstraints();
-	console.log(result);
-*/
-/*
-	capture = createCapture({
-		audio: false,
-		video: {
-			width: 720,
-			height: 720
-		}
-	});
-	capture.hide();
-*/
 	capButton = buttonInit('cap', BUTTON_W, BUTTON_H, BUTTON_X+BUTTON_W+BUTTON_M, BUTTON_Y);
 	capButton.mousePressed(capFn);
 	saveButton = buttonInit('save', BUTTON_W, BUTTON_H, BUTTON_X+2*(BUTTON_W+BUTTON_M), BUTTON_Y);
 	saveButton.mousePressed(saveFn);
 	startButton = buttonInit('start', BUTTON_W, BUTTON_H, BUTTON_X, BUTTON_Y);
 	startButton.mousePressed(startFn);
+	sizeButton = buttonInit('size', BUTTON_W, BUTTON_H, BUTTON_X+3*(BUTTON_W+BUTTON_M), BUTTON_Y);
+	sizeButton.mousePressed(sizeFn);
 	textAlign(CENTER,CENTER);
 }
 function buttonInit(text, w, h, x, y) {
@@ -121,11 +118,20 @@ function draw() {
 	}
 	stroke(200);
 	strokeWeight(3);
-	for (let i=0; i<10; i++){
-		line(BASE_X, BASE_Y+UNIT_SIZE*i, BASE_X+UNIT_SIZE*9, BASE_Y+UNIT_SIZE*i);
-	}
-	for (let i=0; i<10; i++){
-		line(BASE_X+UNIT_SIZE*i, BASE_Y, BASE_X+UNIT_SIZE*i, BASE_Y+UNIT_SIZE*9);
+	if (sizeFlag){
+		for (let i=0; i<16; i++){
+			line(BASE_X, BASE_Y+BASE_W*i/15, BASE_X+BASE_W, BASE_Y+BASE_W*i/15);
+		}
+		for (let i=0; i<16; i++){
+			line(BASE_X+BASE_W*i/15, BASE_Y, BASE_X+BASE_W*i/15, BASE_Y+BASE_W);
+		}
+	}else{
+		for (let i=0; i<10; i++){
+			line(BASE_X, BASE_Y+UNIT_SIZE*i, BASE_X+UNIT_SIZE*9, BASE_Y+UNIT_SIZE*i);
+		}
+		for (let i=0; i<10; i++){
+			line(BASE_X+UNIT_SIZE*i, BASE_Y, BASE_X+UNIT_SIZE*i, BASE_Y+UNIT_SIZE*9);
+		}
 	}
 	fill(255);
 	stroke(255);
