@@ -13,13 +13,15 @@ const UNIT_SIZE = GRID_SIZE*1;
 let capture;
 let captureImage;
 let captureFlag = false;
+let imageFlag = false;
 
 const BUTTON_OFFSET = 8;
-const BUTTON_W = CANVAS_W/4;
-const BUTTON_H = BUTTON_W/2;
-const BUTTON_Y = CANVAS_H*2/3;
+const BUTTON_W = GRID_SIZE*3;
+const BUTTON_H = GRID_SIZE*2;
+const BUTTON_X = GRID_SIZE*2;
+const BUTTON_Y = GRID_SIZE*16;
 const BUTTON_M = 24;
-let capButton, saveButton;
+let capButton, saveButton, startButton;
 
 const DEBUG = true;
 const DEBUG_VIEW_X = 40;
@@ -28,27 +30,11 @@ const DEBUG_VIEW_H = 20;
 
 function preload() {
 }
-function getFn() {
+function startFn() {
 	const val = {
-		facingMode: "user"
+		width: 720,
+		height: 720
 	};
-	if (wSelect.value()!=0){
-		val.width = +wSelect.value();
-	}
-	if (hSelect.value()!=0){
-		val.height = +hSelect.value();
-	}
-//		audio: false,
-//		video: CAMERA_SETTING[select.value()].value
-/*
-		video: {
-			width: 720,
-			height: 1280,
-			facingMode: "user"
-		}
-*/
-	console.log(val);
-//	capture = createCapture(val);
 	capture = createCapture({
 		audio: false,
 		video: val
@@ -57,17 +43,16 @@ function getFn() {
 	captureFlag = true;
 }
 function capFn() {
-	if (!captureFlag){
+	if (captureFlag){
 		const wr = capture.width/CANVAS_W;
 		const w = int(UNIT_SIZE*9*wr);
 		captureImage = capture.get(int(BASE_X*wr), int(BASE_Y*wr), w, w);
-		captureFlag = true;
+		imageFlag = true;
 	}else{
-		captureFlag = false;
 	}
 }
 function saveFn() {
-	if (captureFlag){
+	if (imageFlag){
 		const fileName = 'np'+year()+month()+day()+hour()+minute()+second();
 		console.log(fileName);
 		captureImage.save(fileName, 'jpg');
@@ -77,7 +62,7 @@ function setup() {
 	createCanvas(CANVAS_W, CANVAS_H);
 	time = millis();
 	rectMode(CENTER);
-
+/*
 	capture = createCapture({
 		audio: false,
 		video: {
@@ -86,11 +71,13 @@ function setup() {
 		}
 	});
 	capture.hide();
-
-	capButton = buttonInit('cap', BUTTON_W, BUTTON_H, (CANVAS_W-BUTTON_W)/2, BUTTON_Y);
+*/
+	capButton = buttonInit('cap', BUTTON_W, BUTTON_H, BUTTON_X+BUTTON_W+BUTTON_M, BUTTON_Y);
 	capButton.mousePressed(capFn);
-	saveButton = buttonInit('save', BUTTON_W, BUTTON_H, (CANVAS_W-BUTTON_W)/2, BUTTON_Y+BUTTON_H+BUTTON_M);
+	saveButton = buttonInit('save', BUTTON_W, BUTTON_H, BUTTON_X+2*(BUTTON_W+BUTTON_M), BUTTON_Y);
 	saveButton.mousePressed(saveFn);
+	startButton = buttonInit('start', BUTTON_W, BUTTON_H, BUTTON_X, BUTTON_Y);
+	startButton.mousePressed(startFn);
 	textAlign(CENTER,CENTER);
 }
 function buttonInit(text, w, h, x, y) {
@@ -118,10 +105,10 @@ function draw() {
 			line(i*GRID_SIZE, 0, i*GRID_SIZE, CANVAS_H);
 		}
 	}
-	if (captureFlag){
+	if (imageFlag){
 		image(captureImage, BASE_X, BASE_Y, UNIT_SIZE*9, UNIT_SIZE*9);
-	}else{
-		image(capture, 0, 0, 960, 960);
+	}else if (captureFlag){
+		image(capture, 0, 0, CANVAS_W, CANVAS_W);
 	}
 	stroke(200);
 	strokeWeight(3);
@@ -138,7 +125,9 @@ function draw() {
 	let debugY = DEBUG_VIEW_Y;
 	text('fps:'+fps, DEBUG_VIEW_X, debugY);
 	debugY += DEBUG_VIEW_H;
-	text('w:'+capture.width+' h:'+capture.height, DEBUG_VIEW_X, debugY);
+	if (captureFlag){
+		text('w:'+capture.width+' h:'+capture.height, DEBUG_VIEW_X, debugY);
+	}
 }
 function touchMoved() {
 	return false;
