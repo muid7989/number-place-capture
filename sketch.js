@@ -47,10 +47,14 @@ function startFn() {
 }
 function capFn() {
 	if (captureFlag){
-		const wr = capture.width/CANVAS_W;
-		const w = int(UNIT_SIZE*9*wr);
-		captureImage = capture.get(int(BASE_X*wr), int(BASE_Y*wr), w, w);
-		imageFlag = true;
+		if (imageFlag){
+			imageFlag = false;
+		}else{
+			const wr = capture.width/CANVAS_W;
+			const w = int(UNIT_SIZE*9*wr);
+			captureImage = capture.get(int(BASE_X*wr), int(BASE_Y*wr), w, w);
+			imageFlag = true;
+		}
 	}else{
 	}
 }
