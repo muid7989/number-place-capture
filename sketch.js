@@ -15,7 +15,9 @@ let capture;
 let captureImage;
 let captureFlag = false;
 let imageFlag = false;
-let sizeFlag = false;
+//let sizeFlag = false;
+const SIZE_MODE = [9,15,16];
+let sizeMode = 0;
 
 const BUTTON_OFFSET = 8;
 const BUTTON_W = GRID_SIZE*3;
@@ -59,10 +61,7 @@ function capFn() {
 	}
 }
 function saveFn() {
-	let s = 9;
-	if (sizeFlag){
-		s = 15;
-	}
+	let s = SIZE_MODE[sizeMode];
 	if (imageFlag){
 		const fileName = 'np'+s+'_'+year()+month()+day()+hour()+minute()+second();
 		console.log(fileName);
@@ -70,10 +69,9 @@ function saveFn() {
 	}
 }
 function sizeFn() {
-	if (sizeFlag){
-		sizeFlag = false;
-	}else{
-		sizeFlag = true;
+	sizeMode++;
+	if (sizeMode>=SIZE_MODE.length){
+		sizeMode = 0;
 	}
 }
 function setup() {
@@ -122,6 +120,14 @@ function draw() {
 	}
 	stroke(200);
 	strokeWeight(3);
+	const s = SIZE_MODE[sizeMode];
+	for (let i=0; i<s+1; i++){
+		line(BASE_X, BASE_Y+BASE_W*i/s, BASE_X+BASE_W, BASE_Y+BASE_W*i/s);
+	}
+	for (let i=0; i<s+1; i++){
+		line(BASE_X+BASE_W*i/s, BASE_Y, BASE_X+BASE_W*i/s, BASE_Y+BASE_W);
+	}
+/*
 	if (sizeFlag){
 		for (let i=0; i<16; i++){
 			line(BASE_X, BASE_Y+BASE_W*i/15, BASE_X+BASE_W, BASE_Y+BASE_W*i/15);
@@ -137,6 +143,7 @@ function draw() {
 			line(BASE_X+UNIT_SIZE*i, BASE_Y, BASE_X+UNIT_SIZE*i, BASE_Y+UNIT_SIZE*9);
 		}
 	}
+*/
 	fill(255);
 	stroke(255);
 	textSize(16);
