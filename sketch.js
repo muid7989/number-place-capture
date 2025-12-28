@@ -21,7 +21,7 @@ let sizeMode = 0;
 const ZOOM_MODE = [1.0, 1.2, 1.4, 1.6, 1.8, 2.0];
 let zoomMode = 0;
 
-const BUTTON_OFFSET = 8;
+const BUTTON_OFFSET = 0;
 const BUTTON_W = GRID_SIZE*3;
 const BUTTON_H = GRID_SIZE*2;
 const BUTTON_X = GRID_SIZE*1;
@@ -41,7 +41,7 @@ function startFn() {
 	const val = {
 		width: 720,
 		height: 720,
-		facingMode: {exact: "environment"}
+//		facingMode: {exact: "environment"}
 	};
 	capture = createCapture({
 		audio: false,
@@ -138,7 +138,7 @@ function draw() {
 		image(captureImage, BASE_X, BASE_Y, UNIT_SIZE*9, UNIT_SIZE*9);
 	}else if (captureFlag){
 //		image(capture, 0, 0, CANVAS_W, CANVAS_W);
-		image(capture, CANVAS_W/2*(1-z), CANVAS_W/2*(1-z), CANVAS_W/2*(1+z), CANVAS_W/2*(1+z));
+		image(capture, CANVAS_W/2*(1-z), CANVAS_W/2*(1-z), CANVAS_W*z, CANVAS_W*z);
 	}
 	stroke(200);
 	strokeWeight(3);
