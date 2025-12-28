@@ -41,7 +41,7 @@ function startFn() {
 	const val = {
 		width: 720,
 		height: 720,
-//		facingMode: {exact: "environment"}
+		facingMode: {exact: "environment"}
 	};
 	capture = createCapture({
 		audio: false,
