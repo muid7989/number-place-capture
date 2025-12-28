@@ -18,6 +18,8 @@ let imageFlag = false;
 //let sizeFlag = false;
 const SIZE_MODE = [9,15,16];
 let sizeMode = 0;
+const ZOOM_MODE = [1.0, 1.2, 1.4, 1.6, 1.8, 2.0];
+let zoomMode = 0;
 
 const BUTTON_OFFSET = 8;
 const BUTTON_W = GRID_SIZE*3;
@@ -26,6 +28,7 @@ const BUTTON_X = GRID_SIZE*1;
 const BUTTON_Y = GRID_SIZE*16;
 const BUTTON_M = 24;
 let capButton, saveButton, startButton, sizeButton;
+let zoomPlus, zoomMinus;
 
 const DEBUG = true;
 const DEBUG_VIEW_X = 40;
@@ -52,9 +55,10 @@ function capFn() {
 		if (imageFlag){
 			imageFlag = false;
 		}else{
-			const wr = capture.width/CANVAS_W;
+			const z = ZOOM_MODE[zoomMode];
+			const wr = capture.width/CANVAS_W/z;
 			const w = int(UNIT_SIZE*9*wr);
-			captureImage = capture.get(int(BASE_X*wr), int(BASE_Y*wr), w, w);
+			captureImage = capture.get(int((capture.width-w)/2), int((capture.width-w)/2), w, w);
 			imageFlag = true;
 		}
 	}else{
@@ -74,6 +78,18 @@ function sizeFn() {
 		sizeMode = 0;
 	}
 }
+function zoomPlusFn() {
+	zoomMode++;
+	if (zoomMode>=ZOOM_MODE.length){
+		zoomMode = ZOOM_MODE.length-1;
+	}
+}
+function zoomMinusFn() {
+	zoomMode--;
+	if (zoomMode<0){
+		zoomMode = 0;
+	}
+}
 function setup() {
 	createCanvas(CANVAS_W, CANVAS_H);
 	time = millis();
@@ -86,6 +102,10 @@ function setup() {
 	startButton.mousePressed(startFn);
 	sizeButton = buttonInit('size', BUTTON_W, BUTTON_H, BUTTON_X+3*(BUTTON_W+BUTTON_M), BUTTON_Y);
 	sizeButton.mousePressed(sizeFn);
+	zoomPlus = buttonInit('zoom+', BUTTON_W, BUTTON_H, BUTTON_X+0*(BUTTON_W+BUTTON_M), BUTTON_Y-GRID_SIZE*3);
+	zoomPlus.mousePressed(zoomPlusFn);
+	zoomMinus = buttonInit('zoom-', BUTTON_W, BUTTON_H, BUTTON_X+1*(BUTTON_W+BUTTON_M), BUTTON_Y-GRID_SIZE*3);
+	zoomMinus.mousePressed(zoomMinusFn);
 	textAlign(CENTER,CENTER);
 }
 function buttonInit(text, w, h, x, y) {
@@ -113,10 +133,12 @@ function draw() {
 			line(i*GRID_SIZE, 0, i*GRID_SIZE, CANVAS_H);
 		}
 	}
+	const z = ZOOM_MODE[zoomMode];
 	if (imageFlag){
 		image(captureImage, BASE_X, BASE_Y, UNIT_SIZE*9, UNIT_SIZE*9);
 	}else if (captureFlag){
-		image(capture, 0, 0, CANVAS_W, CANVAS_W);
+//		image(capture, 0, 0, CANVAS_W, CANVAS_W);
+		image(capture, CANVAS_W/2*(1-z), CANVAS_W/2*(1-z), CANVAS_W/2*(1+z), CANVAS_W/2*(1+z));
 	}
 	stroke(200);
 	strokeWeight(3);
@@ -150,6 +172,8 @@ function draw() {
 	strokeWeight(1);
 	let debugY = DEBUG_VIEW_Y;
 	text('fps:'+fps, DEBUG_VIEW_X, debugY);
+	debugY += DEBUG_VIEW_H;
+	text('zoom:'+ZOOM_MODE[zoomMode], DEBUG_VIEW_X, debugY);
 	debugY += DEBUG_VIEW_H;
 	if (captureFlag){
 		text('w:'+capture.width+' h:'+capture.height, DEBUG_VIEW_X, debugY);
