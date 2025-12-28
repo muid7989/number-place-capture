@@ -56,8 +56,8 @@ function capFn() {
 			imageFlag = false;
 		}else{
 			const z = ZOOM_MODE[zoomMode];
-			const wr = capture.width/CANVAS_W/z;
-			const w = int(UNIT_SIZE*9*wr);
+//			const wr = capture.width/CANVAS_W/z;
+			const w = int(capture.width*UNIT_SIZE*9/z/CANVAS_W);
 			captureImage = capture.get(int((capture.width-w)/2), int((capture.width-w)/2), w, w);
 			imageFlag = true;
 		}
